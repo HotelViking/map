@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1b120b">
+  <title>Hotel Viking – Guest Map</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #160f0a;
+      color: #f4ead6;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 14px;
+    }
+
+    header {
+      max-width: 1400px;
+      margin: 0 auto 14px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 4px 0;
+      font-size: clamp(24px, 4vw, 42px);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    header p {
+      margin: 0;
+      opacity: .8;
+      font-size: 14px;
+    }
+
+    .map-wrap {
+      position: relative;
+      width: min(1400px, 100%);
+      margin: 0 auto;
+      overflow: hidden;
+      border: 3px solid #8e6b35;
+      border-radius: 12px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.55);
+      background: #24170e;
+    }
+
+    .map-image {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .hotspot {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: clamp(38px, 4vw, 62px);
+      height: clamp(38px, 4vw, 62px);
+      border: 3px solid #d9b66b;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 30%, #8d2920 0 18%, #5b1713 45%, #2b0c09 100%);
+      color: #fff4d8;
+      font-family: Georgia, serif;
+      font-weight: bold;
+      font-size: clamp(18px, 2vw, 28px);
+      cursor: pointer;
+      z-index: 5;
+      box-shadow: 0 3px 10px rgba(0,0,0,.65), inset 0 0 0 2px rgba(255,230,160,.25);
+      transition: transform .15s ease, filter .15s ease;
+    }
+
+    .hotspot:hover,
+    .hotspot:focus-visible {
+      transform: translate(-50%, -50%) scale(1.13);
+      filter: brightness(1.18);
+      outline: none;
+    }
+
+    .parking {
+      background:
+        radial-gradient(circle at 35% 30%, #56733b 0 18%, #334b24 45%, #182512 100%);
+      font-size: clamp(16px, 1.8vw, 25px);
+    }
+
+    .legend {
+      max-width: 1400px;
+      margin: 10px auto 0;
+      text-align: center;
+      font-size: 13px;
+      opacity: .75;
+    }
+
+    /* Information window */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.68);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 20;
+    }
+
+    .overlay.open {
+      display: flex;
+    }
+
+    .card {
+      width: min(620px, 100%);
+      max-height: 90vh;
+      overflow: auto;
+      background: linear-gradient(#332115, #1f140d);
+      border: 2px solid #a98245;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.75);
+      padding: 20px;
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      top: 9px;
+      right: 11px;
+      border: 0;
+      background: transparent;
+      color: #f4ead6;
+      font-size: 30px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .card img {
+      width: 100%;
+      max-height: 330px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #8e6b35;
+      margin-bottom: 15px;
+    }
+
+    .card h2 {
+      margin: 0 38px 8px 0;
+      font-size: 28px;
+      color: #e6c77c;
+    }
+
+    .card p {
+      line-height: 1.6;
+      margin: 0;
+      white-space: pre-line;
+    }
+
+    .hint {
+      margin-top: 15px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(217,182,107,.35);
+      font-size: 12px;
+      opacity: .65;
+    }
+
+    @media (max-width: 600px) {
+      .page { padding: 7px; }
+      .map-wrap { border-width: 2px; border-radius: 8px; }
+      .card { padding: 16px; }
+      .card h2 { font-size: 24px; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header>
+      <h1>Hotel Viking</h1>
+      <p>Interactive Guest Map</p>
+    </header>
+
+    <div class="map-wrap" id="mapWrap">
+      <!--
+        IMPORTANT:
+        Upload your final map image to this repository and name it:
+        map.png
+
+        If you use another filename, change the src below.
+      -->
+      <img class="map-image" src="map.png" alt="Hotel Viking property map">
+
+      <!--
+        Marker positions are percentages of the map width/height.
+        If a marker needs moving later, change only left/top.
+      -->
+
+      <!-- Locations 1–6 -->
+      <button class="hotspot" style="left:44.3%; top:34.5%;" data-id="1" aria-label="Location 1">1</button>
+      <button class="hotspot" style="left:41.0%; top:55.4%;" data-id="2" aria-label="Location 2">2</button>
+      <button class="hotspot" style="left:65.8%; top:63.8%;" data-id="3" aria-label="Location 3">3</button>
+      <button class="hotspot" style="left:67.1%; top:42.3%;" data-id="4" aria-label="Location 4">4</button>
+      <button class="hotspot" style="left:46.9%; top:65.1%;" data-id="5" aria-label="Location 5">5</button>
+      <button class="hotspot" style="left:23.5%; top:29.3%;" data-id="6" aria-label="Location 6">6</button>
+
+      <!-- Parking -->
+      <button class="hotspot parking" style="left:49.5%; top:19.5%;" data-id="P1" aria-label="Parking">P</button>
+      <button class="hotspot parking" style="left:47.8%; top:52.0%;" data-id="P2" aria-label="Parking">P</button>
+      <button class="hotspot parking" style="left:68.0%; top:53.5%;" data-id="P3" aria-label="Parking">P</button>
+    </div>
+
+    <div class="legend">
+      Tap a numbered marker or parking symbol for information.
+    </div>
+  </main>
+
+  <!-- Popup -->
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
+    <div class="card">
+      <button class="close" id="closeBtn" aria-label="Close">&times;</button>
+      <img id="popupImage" src="" alt="" style="display:none;">
+      <h2 id="popupTitle"></h2>
+      <p id="popupText"></p>
+      <div class="hint">Hotel Viking • Hafnarfjörður</div>
+    </div>
+  </div>
+
+  <script>
+    /*
+      ==========================================================
+      EDIT YOUR INFORMATION HERE
+      ==========================================================
+
+      Replace the titles/descriptions with your real information.
+      To add a photo:
+        1. Put the photo in the "images" folder.
+        2. Example: images/reception.jpg
+        3. Put that path in the "image" field.
+
+      Example:
+        image: "images/reception.jpg"
+
+      You can also leave image: "" if there is no photo.
+    */
+
+    const locations = {
+      "1": {
+        title: "Location 1",
+        description: "Add the description for location 1 here.",
+        image: ""
+      },
+
+      "2": {
+        title: "Location 2",
+        description: "Add the description for location 2 here.",
+        image: ""
+      },
+
+      "3": {
+        title: "Location 3",
+        description: "Add the description for location 3 here.",
+        image: ""
+      },
+
+      "4": {
+        title: "Location 4",
+        description: "Add the description for location 4 here.",
+        image: ""
+      },
+
+      "5": {
+        title: "Location 5",
+        description: "Add the description for location 5 here.",
+        image: ""
+      },
+
+      "6": {
+        title: "Location 6",
+        description: "Add the description for location 6 here.",
+        image: ""
+      },
+
+      "P1": {
+        title: "Parking",
+        description: "Guest parking area.",
+        image: ""
+      },
+
+      "P2": {
+        title: "Parking",
+        description: "Guest parking area.",
+        image: ""
+      },
+
+      "P3": {
+        title: "Parking",
+        description: "Guest parking area.",
+        image: ""
+      }
+    };
+
+    const overlay = document.getElementById("overlay");
+    const popupTitle = document.getElementById("popupTitle");
+    const popupText = document.getElementById("popupText");
+    const popupImage = document.getElementById("popupImage");
+    const closeBtn = document.getElementById("closeBtn");
+
+    function openLocation(id) {
+      const item = locations[id];
+      if (!item) return;
+
+      popupTitle.textContent = item.title;
+      popupText.textContent = item.description;
+
+      if (item.image) {
+        popupImage.src = item.image;
+        popupImage.alt = item.title;
+        popupImage.style.display = "block";
+      } else {
+        popupImage.removeAttribute("src");
+        popupImage.style.display = "none";
+      }
+
+      overlay.classList.add("open");
+      closeBtn.focus();
+    }
+
+    function closeLocation() {
+      overlay.classList.remove("open");
+    }
+
+    document.querySelectorAll(".hotspot").forEach(button => {
+      button.addEventListener("click", () => {
+        openLocation(button.dataset.id);
+      });
+    });
+
+    closeBtn.addEventListener("click", closeLocation);
+
+    overlay.addEventListener("click", (event) => {
+      if (event.target === overlay) closeLocation();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeLocation();
+    });
+  </script>
+</body>
+</html>
