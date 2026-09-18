@@ -223,6 +223,7 @@
       <img id="popupImage" src="" alt="" style="display:none;">
       <h2 id="popupTitle"></h2>
       <p id="popupText"></p>
+      <a id="popupLink" href="#" target="_blank" rel="noopener" style="display:none; color:#e6c77c; margin-top:14px; text-decoration:underline;">More information</a>
       <div class="hint">Hotel Viking • Hafnarfjörður</div>
     </div>
   </div>
@@ -247,63 +248,73 @@
 
     const locations = {
       "1": {
-        title: "Location 1",
-        description: "Add the description for location 1 here.",
-        image: ""
+        title: "Fjörukráin – Restaurant",
+        description: "Fjörukráin is the Viking Village restaurant, offering a unique Viking-themed dining experience in the heart of Hafnarfjörður.",
+        image: "",
+        link: "https://www.fjorukrain.is/"
       },
 
       "2": {
-        title: "Location 2",
-        description: "Add the description for location 2 here.",
-        image: ""
+        title: "Hotel Viking – Old Wing",
+        description: "The original wing of Hotel Viking, featuring the traditional Viking atmosphere and character of the hotel.",
+        image: "",
+        link: ""
       },
 
       "3": {
-        title: "Location 3",
-        description: "Add the description for location 3 here.",
-        image: ""
+        title: "Hotel Viking – New Wing",
+        description: "The new wing of Hotel Viking, including the Reception and Breakfast Area.",
+        image: "",
+        link: ""
       },
 
       "4": {
-        title: "Location 4",
-        description: "Add the description for location 4 here.",
-        image: ""
+        title: "Cottages",
+        description: "Our Viking Village cottages, located within the hotel property.",
+        image: "",
+        link: ""
       },
 
       "5": {
-        title: "Location 5",
-        description: "Add the description for location 5 here.",
-        image: ""
+        title: "Hot Tub & Sauna",
+        description: "Relax in our geothermal hot tub and sauna area after your journey or a day exploring Iceland.",
+        image: "",
+        link: ""
       },
 
       "6": {
-        title: "Location 6",
-        description: "Add the description for location 6 here.",
-        image: ""
+        title: "FlyBus Pick-up Point",
+        description: "FlyBus pick-up point for transfers to Keflavík International Airport (KEF).",
+        image: "",
+        link: ""
       },
 
       "P1": {
         title: "Parking",
         description: "Guest parking area.",
-        image: ""
+        image: "",
+        link: ""
       },
 
       "P2": {
         title: "Parking",
         description: "Guest parking area.",
-        image: ""
+        image: "",
+        link: ""
       },
 
       "P3": {
         title: "Parking",
         description: "Guest parking area.",
-        image: ""
+        image: "",
+        link: ""
       }
     };
 
     const overlay = document.getElementById("overlay");
     const popupTitle = document.getElementById("popupTitle");
     const popupText = document.getElementById("popupText");
+    const popupLink = document.getElementById("popupLink");
     const popupImage = document.getElementById("popupImage");
     const closeBtn = document.getElementById("closeBtn");
 
@@ -313,6 +324,14 @@
 
       popupTitle.textContent = item.title;
       popupText.textContent = item.description;
+
+      if (item.link) {
+        popupLink.href = item.link;
+        popupLink.style.display = "inline-block";
+      } else {
+        popupLink.removeAttribute("href");
+        popupLink.style.display = "none";
+      }
 
       if (item.image) {
         popupImage.src = item.image;
